@@ -1,2 +1,4 @@
-data/
+data/html/*
+data/images/*
+data/sources/*
 .DS_Store
