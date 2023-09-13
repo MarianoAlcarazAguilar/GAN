@@ -20,19 +20,19 @@ import sys
 # - Dar la opción de ser headless o no DONE
 
 class Controler:
-    def __init__(self, headless=False):
-        self.driver = self.__start_driver(headless=headless)
+    def __init__(self, headless=False, dont_load_images=True):
+        self.driver = self.__start_driver(headless=headless, dont_load_images=dont_load_images)
         self.active_controler = True
         self.headless = headless
         self.active_url = False
 
-    def __start_driver(self, headless:bool=False):
+    def __start_driver(self, headless:bool=False, dont_load_images:bool=True):
+        chrome_options = Options()
         if headless:
-            chrome_options = Options()
             chrome_options.add_argument('--headless')
-            driver = webdriver.Chrome(options=chrome_options)
-        else:
-            driver = webdriver.Chrome()
+        if dont_load_images:
+            chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+        driver = webdriver.Chrome(options=chrome_options)
         return driver
         
     def open_url(self, url:str, maximize_window=False):
@@ -151,8 +151,8 @@ if __name__ == "__main__":
     # categoría a descargar
     # total de iteraciones
     if len(sys.argv) > 2:
-        category = sys.argv[1]
-        total_iterations = int(sys.argv[2])
+        category = ' '.join(sys.argv[1:-1])
+        total_iterations = int(sys.argv[-1])
     else:
         category = 'People'
         total_iterations = 300
@@ -168,6 +168,7 @@ if __name__ == "__main__":
 
     controler = Controler()
     controler.open_url(url=url, maximize_window=True)
+    filename = f'./data/html/unsplash_source_{category.lower().replace(" ", "_")}.html'
 
 
     while 1:
@@ -182,17 +183,20 @@ if __name__ == "__main__":
     contador = 0
 
     for i in range(total_iterations):
+        if i % 50 == 0:
+            print(f'Iteration {i}/{total_iterations}')
+            controler.get_html(filename)
         time.sleep(.3)
-        controler.scroll_down_with_wheel(scroll_distance=1300)
+        controler.scroll_down_with_wheel(scroll_distance=500)
         new_height = controler.get_driver().execute_script ('return document.body.scrollHeight')
         if new_height == previous_height:
             contador += 1
-            if contador > 5:
-                print('Scrolling up') # Para saber que estamos subiendo porque ya nos habíamos atorado
-                controler.scroll_down_with_wheel(scroll_distance=-10000)
+            if contador > 3:
+                controler.scroll_down_with_wheel(scroll_distance=-1000)
                 contador = 0
+        previous_height = new_height
 
-    filename = f'./data/html/unsplash_source_{category.lower()}.html'
+    
     controler.get_html(filename)
 
     controler.quit_driver()

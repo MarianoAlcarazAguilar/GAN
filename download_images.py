@@ -5,7 +5,7 @@ import sys
 
 # Leemos los sources de las imágenes
 if len(sys.argv) > 1:
-    category = sys.argv[1].lower()
+    category = '_'.join(sys.argv[1:]).lower()
 else:
     category = 'people'
 

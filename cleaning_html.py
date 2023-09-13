@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # Abrimos el archivo html
     #html_location = './data/unsplash_source.html'
     if len(sys.argv) > 1:
-        category = sys.argv[1].lower()
+        category = '_'.join(sys.argv[1:]).lower()
     else:
         category = 'people'
 
