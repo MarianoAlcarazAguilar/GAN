@@ -166,8 +166,8 @@ if __name__ == "__main__":
     # tenemos que scrollear hasta encontrarla
     xpath_list_element = '//*[@id="app"]/div/div[2]/div/div/div/div[3]'
 
-    controler = Controler()
-    controler.open_url(url=url, maximize_window=True)
+    controler = Controler(headless=False)
+    controler.open_url(url=url, maximize_window=False)
     filename = f'./data/html/unsplash_source_{category.lower().replace(" ", "_")}.html'
 
 
